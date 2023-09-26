@@ -17,14 +17,10 @@ int main() {
         // encontra o menor fator
 	    for (div = 2; num % div; div = div + 1);
 
-	    print(div)
+	    print(div);
 	    num = num / div;
 	    if (num > 1)
 	       print(" * ");
 	}
-	-1.4;
-	2;
-	-8;
-	5.2;
     return 0;
 } 
