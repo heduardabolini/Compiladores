@@ -1,9 +1,8 @@
 from enumtokens import *
-from lexico import resultado
+from main import resultado
 import re
 
 tokens = resultado()
-#print(tokens)
 
 ####################################### INICIO - FUNCOES PRINCIPAIS ###########################
 
@@ -310,6 +309,9 @@ def fator(): #fator> -> 'NUMint' | 'NUMfloat' | 'IDENT'  | '(' <atrib> ')' ;
         consome(enumtokens.TKN_ABRE_PARENTESES, 'fator')
         atrib()
         consome(enumtokens.TKN_FECHA_PARENTESES, 'fator')
+    else:
+        print("Esperado varivel, numero ou expressao e foi encontrado o token {tokens[0][0]}")
+        exit()
         
 ####################################### FIM - EXPRESSOES ############################################
 
@@ -400,9 +402,3 @@ def descobretoken(token):
     return tipo
 
 function()
-
-
-
-
-
-

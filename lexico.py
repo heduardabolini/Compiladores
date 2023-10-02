@@ -1,18 +1,10 @@
 from enumtokens import *
 import re
 
-#função para ler o arquivo em uma lista
-def lerArq():
-    arq = open("prog6.c", "r")
-    linhas = arq.readlines() 
-    arq.close()
-    return linhas
-
 #função para separar os tokens
 def separarToken(linhas):
     linhas_comentarios_barra = re.sub(r'//.*', '', ''.join(linhas)) #retirar comentários em barra
-    regex = r'"[^"]+"|(-?\d+\.\d+)|(-?\d+)|\b\w+\b|(\|\||&&|<=|>=|==|\n|.)'#regex para separar os tokens
-    #r'"[^"]+"|(-?\d+\.\d+)|(-?\d+)|\b\w+\b|.' 
+    regex = r'[a-zA-Z_]\w*|[a-zA-Z]*\d+\.\d+[a-zA-Z]*|[a-zA-Z]+\d+|\w+|"[^"]+"|(-?\d+\.\d+)|(-?\d+)|\b\w+\b|(\|\||&&|<=|>=|==|\n|\s+|.)'
     tokens = []
 
     for match in re.finditer(regex, linhas_comentarios_barra, re.DOTALL): #encontrando as correspondências da expressão regular
@@ -62,11 +54,11 @@ def lexico(token):
     
     #retirando palavras reservadas da linguagem mini c e números
     palavras_reservadas = ["int", "float", "for", "while", "break", "continue", "if", "else", "print", "scan", "return"]
-    padrao = r'\b(?!(?:' + '|'.join(re.escape(palavra) for palavra in palavras_reservadas) + r'|"\w+))\b(?![-+]?\d+\b)\w+\b'    
+    padrao = r'\b(?!(?:' + '|'.join(re.escape(palavra) for palavra in palavras_reservadas) + r')\b)(?!\d+\.\d+)\w+(?!\w)\b'
 
     #analisando cada linha token
     for i in token:
-     
+        variaveis_encontradas = re.findall(padrao, i)
         if i == '+':
             tokens.append((enumtokens.TKN_ADICAO, i, linha, coluna))
             coluna +=len(i)
@@ -199,28 +191,33 @@ def lexico(token):
         elif re.match(r'"([^"]*)"',i):
             tokens.append((enumtokens.TKN_STRING, i, linha, coluna))
             coluna +=len(i)
-        
-        #verificando se é número 
-        # if re.match(r'-?\d+(?:\.\d+)?',i):
-        #     tokens.append((enumtokens.TKN_NUMEROS, i, linha, coluna))
-        #     coluna +=len(i)
 
         #verificando se é inteiro
-        elif re.match(r'-?\d+$',i):
+        elif re.match(r'^-?\d+$',i):
             tokens.append((enumtokens.TKN_NUMEROS_INT, i, linha, coluna))
             coluna +=len(i)
 
         #verificando se é float
-        elif re.match(r'-?\d+\.\d+',i):
+        elif re.match(r'^-?\d+(\.\d+)?$',i):
             tokens.append((enumtokens.TKN_NUMEROS_FLOAT, i, linha, coluna))
             coluna +=len(i)
-        
+
         #verificando se é variável, excluindo as strings com aspas duplas
-        variaveis_encontradas = re.findall(padrao, i)
-        for variavel in variaveis_encontradas:
-            if i == variavel and i != '"':
-                tokens.append((enumtokens.TKN_VARIAVEIS, i, linha, coluna))
-                coluna +=len(i)
+        elif variaveis_encontradas:
+            for variavel in variaveis_encontradas:
+                if i == variavel and i != '"' and (not i[0].isnumeric() and not i.isnumeric()):
+                    tokens.append((enumtokens.TKN_VARIAVEIS, i, linha, coluna))
+                    coluna +=len(i)   
+                else:
+                    if not i.isnumeric():
+                        print("Erro Lexico - token {} - linha {} - coluna {}, encontrado numero seguido de letra".format(i, linha, coluna))
+                        exit()
+                        coluna +=len(i)  
+
+        elif i == '"':
+            print('Erro Lexico - token {} - linha {} - coluna {}, abertura de aspas (") sem fechamento '.format(i, linha, coluna))
+            exit()
+            coluna +=len(i)   
 
         #espaço em branco '', soma 1 na coluna            
         if re.match(r'\s+', i): 
@@ -239,27 +236,3 @@ def lexico(token):
             coluna = 1
 
     return tokens
-
-# # ler arquivo e transforma os comentários em bloco, em comentários em barra
-# linhas = lerArq()
-# comentario = transformarComentario(linhas)
-# for linha in comentario:
-#     print(linha)
-
-# #separa os tokens para analise
-# tokens = separarToken(comentario)
-# print(tokens)
-# print("\n")
-
-# #analisador lexico, com retorno de (tipo, token, linha, coluna)
-# lexicos = lexico(tokens)
-# for token in lexicos:
-#     print(token)
-
-def resultado():
-    linhas = lerArq()
-    comentario = transformarComentario(linhas)
-    tokens = separarToken(comentario)
-    lexicos = lexico(tokens)
-
-    return lexicos

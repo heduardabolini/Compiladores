@@ -10,7 +10,7 @@ int main() {
 	a = b = c = 3;
 	print(a, "\n", b, "\n", c, "\n");
 	
-	if(n1 == 1 || n2 <= 0 || 5 > 6) {
+	if(n == 1 || n <= 0 || 5 > 6) {
 		print(n, "\n");
 	}
 	print("asdasdsa\n");

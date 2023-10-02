@@ -1,0 +1,15 @@
+/*==============================
+**  Programa exemplo em miniC  
+**
+**  - fatora um inteiro lido.
+**==============================
+*/  
+
+int main(int num, int b) {
+
+	int div, resto;
+    num = 1 + 1 + 2 + num * 4 * 2 * 1;
+
+
+	return 0;
+}
