@@ -213,14 +213,21 @@ def lexico(token):
                 else:
                     if not i.isnumeric():
                         print("Erro Lexico - token {} - linha {} - coluna {}, encontrado numero seguido de letra".format(i, linha, coluna))
-                        exit()
                         coluna +=len(i)  
+                        exit()
+                        
 
         elif i == '"':
-            print('Erro Lexico - token {} - linha {} - coluna {}, abertura de aspas (") sem fechamento '.format(i, linha, coluna))
+            print('Erro Lexico - token {} - linha {} - coluna {}, abertura de aspas (") sem fechamento. '.format(i, linha, coluna))
+            coluna +=len(i) 
             exit()
-            coluna +=len(i)   
 
+        else:
+            print("Erro Lexico - token {} - linha {} - coluna {}, não reconhecido pela linguagem. ".format(i, linha, coluna))
+            coluna +=len(i)  
+            exit()
+                    
+              
         #espaço em branco '', soma 1 na coluna            
         if re.match(r'\s+', i): 
             coluna +=len(i)
