@@ -4,16 +4,18 @@ import re
 #função para separar os tokens
 def separarToken(linhas):
     linhas_comentarios_barra = re.sub(r'//.*', '', ''.join(linhas)) #retirar comentários em barra
-    regex = r'[a-zA-Z_]\w*|[a-zA-Z]*\d+\.\d+[a-zA-Z]*|[a-zA-Z]+\d+|\w+|"[^"]+"|(-?\d+\.\d+)|(-?\d+)|\b\w+\b|(\|\||&&|<=|>=|==|\n|\s+|.)'
-    tokens = []
+    tokens = re.split(r'(\s+|\(|\)|\{|\}|\;|\+|\*|\/|\%|\|\||\&\&|==|!=|>=|<=|>|<|=|"[^"]+"|\b\d+(?=-\d+)\b|\b-\d+\b|,|!)', linhas_comentarios_barra)
+    tokens = [token for token in tokens if token.strip()]
+    # regex = r'[a-zA-Z_]\w*|[a-zA-Z]*\d+\.\d+[a-zA-Z]*|[a-zA-Z]+\d+|\w+|"[^"]+"|(-?\d+\.\d+)|(-?\d+)|\b\w+\b|(\|\||&&|<=|>=|==|\n|\s+|.)'
+    # tokens = []
 
-    for match in re.finditer(regex, linhas_comentarios_barra, re.DOTALL): #encontrando as correspondências da expressão regular
-        for i in match.groups():
-            if i is not None: #encontrando token
-                tokens.append(i)
-                break
-        else:
-            tokens.append(match.group(0))
+    # for match in re.finditer(regex, linhas_comentarios_barra, re.DOTALL): #encontrando as correspondências da expressão regular
+    #     for i in match.groups():
+    #         if i is not None: #encontrando token
+    #             tokens.append(i)
+    #             break
+    #     else:
+    #         tokens.append(match.group(0))
 
     return tokens
 

@@ -12,10 +12,16 @@ def lerArq(nome_arquivo):
         sys.exit(1)
 
 def resultado():
+        
+    if len(sys.argv) < 2:
+        print("Erro! Passar o nome do arquivo")
+        sys.exit(1)
+
     nome_arquivo = sys.argv[1]
     linhas = lerArq(nome_arquivo)
     comentario = transformarComentario(linhas)
     tokens = separarToken(comentario)
+    print (tokens)
     lexicos = lexico(tokens)
     return lexicos
 
