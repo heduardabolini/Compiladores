@@ -1,18 +1,19 @@
 
-n = 9 * 5 ?:?& + (-3.5);
-{ int=1;}
-9+8-10*7/4%5;
-1ca;
+
+
+// n = 9 * 5 ?:?& + (-3.5);
+// { int 0.1c=1;}
+// 0.1c
+// 9+8-10*7/4%5;
+// 1ca;
 ca;
-0.1c;
-"testeee oi";
-A&&A;
+// "testeee oi";
 B||E;
 ! c;
 a == 2
-"bolo de chocolate";
-b!=0
+// "bolo de chocolate";
+// b!=0
+A&A;
 a<b>c<=s>=4
-'print(">>Cinco<<\n);
 -40;
 p-7;

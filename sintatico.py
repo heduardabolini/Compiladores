@@ -310,7 +310,8 @@ def fator(): #fator> -> 'NUMint' | 'NUMfloat' | 'IDENT'  | '(' <atrib> ')' ;
         atrib()
         consome(enumtokens.TKN_FECHA_PARENTESES, 'fator')
     else:
-        print(f"Esperado varivel, numero ou expressao e foi encontrado o token {tokens[0][0]}")
+        encontrado = descobretoken(tokens[0][0])
+        print(f"Esperado varivel, numero ou expressao e foi encontrado o token {encontrado}")
         exit()
         
 ####################################### FIM - EXPRESSOES ############################################

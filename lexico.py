@@ -1,21 +1,10 @@
 from enumtokens import *
 import re
 
-#função para separar os tokens
 def separarToken(linhas):
     linhas_comentarios_barra = re.sub(r'//.*', '', ''.join(linhas)) #retirar comentários em barra
-    tokens = re.split(r'(\s+|\(|\)|\{|\}|\;|\+|\*|\/|\%|\|\||\&\&|==|!=|>=|<=|>|<|=|"[^"]+"|\b\d+(?=-\d+)\b|\b-\d+\b|,|!)', linhas_comentarios_barra)
-    tokens = [token for token in tokens if token.strip()]
-    # regex = r'[a-zA-Z_]\w*|[a-zA-Z]*\d+\.\d+[a-zA-Z]*|[a-zA-Z]+\d+|\w+|"[^"]+"|(-?\d+\.\d+)|(-?\d+)|\b\w+\b|(\|\||&&|<=|>=|==|\n|\s+|.)'
-    # tokens = []
-
-    # for match in re.finditer(regex, linhas_comentarios_barra, re.DOTALL): #encontrando as correspondências da expressão regular
-    #     for i in match.groups():
-    #         if i is not None: #encontrando token
-    #             tokens.append(i)
-    #             break
-    #     else:
-    #         tokens.append(match.group(0))
+    tokens = re.split(r'(\(|\)|\{|\}|\;|\+|\*|\/|\%|\|\||\&\&|==|!=|>=|<=|>|<|=|"[^"]+"|,|!|-|\n|\s+)', linhas_comentarios_barra)
+    tokens = [token for token in tokens if token != '']
 
     return tokens
 
@@ -60,7 +49,24 @@ def lexico(token):
 
     #analisando cada linha token
     for i in token:
+        #espaço em branco '', soma 1 na coluna            
+        if re.match(r'\s+', i): 
+            coluna +=len(i)
+
+        #tabulacao \t, soma 4 na coluna 
+        if re.match(r'\t', i):
+            if coluna == 2:
+                coluna = 4
+            else:
+                coluna +=4
+
+        #quebra de linha, soma na linha e reseta a coluna
+        if i == '\n':
+            linha += 1
+            coluna = 1
+            
         variaveis_encontradas = re.findall(padrao, i)
+
         if i == '+':
             tokens.append((enumtokens.TKN_ADICAO, i, linha, coluna))
             coluna +=len(i)
@@ -211,37 +217,25 @@ def lexico(token):
                     tokens.append((enumtokens.TKN_VARIAVEIS, i, linha, coluna))
                     coluna +=len(i)   
                 else:
-                    if not i.isnumeric():
+                    if not i.isnumeric() and re.search(r'[^\w\s.]', i):
+                        print("Erro Lexico - token {} - linha {} - coluna {}, encontrado caracteres especiais. ".format(i, linha, coluna))
+                        coluna +=len(i)  
+                        exit()
+                    elif not i.isnumeric():
                         print("Erro Lexico - token {} - linha {} - coluna {}, encontrado numero seguido de letra".format(i, linha, coluna))
                         coluna +=len(i)  
                         exit()
                         
 
         elif i == '"':
-            print('Erro Lexico - token {} - linha {} - coluna {}, abertura de aspas (") sem fechamento. '.format(i, linha, coluna))
+            print('Erro Lexico - token {} - linha {} - coluna {}, abertura de aspas (") sem fechamento '.format(i, linha, coluna))
             coluna +=len(i) 
             exit()
 
         else:
-            print("Erro Lexico - token {} - linha {} - coluna {}, não reconhecido pela linguagem. ".format(i, linha, coluna))
-            coluna +=len(i)  
-            exit()
-                    
-              
-        #espaço em branco '', soma 1 na coluna            
-        if re.match(r'\s+', i): 
-            coluna +=len(i)
-
-        #tabulacao \t, soma 4 na coluna 
-        if re.match(r'\t', i):
-            if coluna == 2:
-                coluna = 4
-            else:
-                coluna +=4
-
-        #quebra de linha, soma na linha e reseta a coluna
-        if i == '\n':
-            linha += 1
-            coluna = 1
-
+            if not re.match(r'\s+', i) and not re.match(r'\n', i):
+                print("Erro Lexico - token {} - linha {} - coluna {}, não reconhecido pela linguagem. ".format(i, linha, coluna))
+                coluna +=len(i)  
+                exit()
+           
     return tokens
