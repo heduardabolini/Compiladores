@@ -19,6 +19,7 @@ def guardarPosicao(exemplo):
 def listaExecucao(lista, posicao):
     execucao = {}
     i = 0  #posição atual na lista
+    valida = False
 
     while i < len(lista):
         tupla = lista[i]
@@ -38,7 +39,11 @@ def listaExecucao(lista, posicao):
         if tupla[0] in ['+', '-', '*', '/', '&&', '||', '=', '!', '==', '!=', '<', '<=', '>', '>=']:
             for elemento in execucao:
                 if elemento == tupla[2]: #Duvida -> se a variavel nao existir?
-                    val = list(execucao.values())[0] + tupla[0] + tupla[3]        
+                    val = list(execucao.values())[0] + tupla[0] + tupla[3]
+                    valida = True  
+            if valida == False:
+                print("Variável não encontrada")
+                exit()
             execucao[tupla[1]] = val 
 
         if tupla[0] == 'if':
@@ -46,7 +51,7 @@ def listaExecucao(lista, posicao):
                 if elemento == tupla[1]:
                     condicao = eval(execucao[tupla[1]])
                     if condicao:
-                        label_pos = posicao[tupla[2]] #Duvida -> label é so uma marcacao? precisa fazer algo com ela?
+                        label_pos = posicao[tupla[2]] 
                         #print(label_pos)
                         i = label_pos
                     else:
