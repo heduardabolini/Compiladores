@@ -41,10 +41,11 @@ def listaExecucao(lista, posicao):
             else:
                 op1 = tupla[2]
 
-            if tupla[3] in execucao:
-                op2 = execucao[tupla[3]]
-            else:
-                op2 = tupla[3]
+            if tupla[3] != None:
+                if tupla[3] in execucao:
+                    op2 = execucao[tupla[3]]
+                else:
+                    op2 = tupla[3]
 
             if op1.isnumeric() and op2.isnumeric():
                 val = eval(op1 + tupla[0] + op2)
