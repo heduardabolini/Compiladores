@@ -48,7 +48,11 @@ def listaExecucao(lista, posicao):
                     op2 = tupla[3]
 
             if op1.isnumeric() and op2.isnumeric():
-                val = eval(op1 + tupla[0] + op2)
+                if tupla[3] != None:
+                    val = eval(op1 + tupla[0] + op2)
+                else:
+                    val = eval(tupla[0] + op1)
+                    
                 execucao[tupla[1]] = val
             else:
                 print("Variável não encontrada")
