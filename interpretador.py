@@ -51,7 +51,11 @@ def listaExecucao(lista, posicao):
                 if tupla[3] != None:
                     val = eval(op1 + tupla[0] + op2)
                 else:
-                    val = eval(tupla[0] + op1)
+                    if tupla[0] in ['+', '-']:
+                        val = eval(tupla[0] + op1)
+                    else:
+                        print("Operação Inválida")
+                        exit() 
                     
                 execucao[tupla[1]] = val
             else:
