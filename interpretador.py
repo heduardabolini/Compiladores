@@ -19,9 +19,15 @@ def guardarPosicao(exemplo):
 def listaExecucao(lista, posicao):
     execucao = {}
     i = 0
+    logico = {
+        '!': '  not ',
+        '&&':'  and   ',
+        '||':'  or  '
+    }
 
     while i < len(lista):
         tupla = lista[i]
+        print(tupla)
 
         if tupla[0] == 'call':
             if tupla[1] == 'scan':
@@ -36,6 +42,9 @@ def listaExecucao(lista, posicao):
                     print(tupla[2])
                 
         if tupla[0] in ['+', '-', '*', '/', '&&', '||', '=', '!', '==', '!=', '<', '<=', '>', '>=']:
+            op1 = None
+            op2 = None
+
             if tupla[2] in execucao:
                 op1 = execucao[tupla[2]]
             else:
@@ -47,9 +56,33 @@ def listaExecucao(lista, posicao):
                 else:
                     op2 = tupla[3]
 
-            if op1.isnumeric() and op2.isnumeric():
+            
+            if isinstance(op1, bool):
+                op1 = str(op1)
                 if tupla[3] != None:
-                    val = eval(op1 + tupla[0] + op2)
+                    if isinstance(op2, bool):
+                        if tupla[0] in logico:
+                            op2 = str(op2)
+                            val = eval(op1 + logico[tupla[0]] + op2)
+                    else:
+                        print("Variável não encontrada")
+                        exit()
+                else:
+                    if tupla[0] in ['!']:
+                        val = eval(logico[tupla[0]] + op1)
+                    else:
+                        print("Operação Inválida")
+                        exit() 
+                    
+                execucao[tupla[1]] = val
+
+            elif op1.isnumeric():
+                if tupla[3] != None:
+                    if op2.isnumeric():
+                        val = eval(op1 + tupla[0] + op2)
+                    else:
+                        print("Variável não encontrada")
+                        exit()
                 else:
                     if tupla[0] in ['+', '-']:
                         val = eval(tupla[0] + op1)
