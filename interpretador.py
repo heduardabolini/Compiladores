@@ -27,7 +27,7 @@ def listaExecucao(lista, posicao):
 
     while i < len(lista):
         tupla = lista[i]
-        print(tupla)
+        # print(tupla)
 
         if tupla[0] == 'call':
             if tupla[1] == 'scan':
@@ -37,11 +37,18 @@ def listaExecucao(lista, posicao):
                                               
             elif tupla[1] == 'print':
                 if tupla[2] in execucao:
-                    print(execucao[tupla[2]])
+                    print(execucao[tupla[2]], end="")
                 else:
-                    print(tupla[2])
+                    print(tupla[2], end="")
+                
+                if tupla[3] != None:
+                    if tupla[3] in execucao:
+                        print(execucao[tupla[3]])
+                    else:
+                        print(tupla[3])
                 
         if tupla[0] in ['+', '-', '*', '/', '&&', '||', '=', '!', '==', '!=', '<', '<=', '>', '>=']:
+            # print(execucao)
             op1 = None
             op2 = None
 
@@ -49,14 +56,15 @@ def listaExecucao(lista, posicao):
                 op1 = execucao[tupla[2]]
             else:
                 op1 = tupla[2]
+            op1 = str(op1)
 
             if tupla[3] != None:
                 if tupla[3] in execucao:
                     op2 = execucao[tupla[3]]
                 else:
                     op2 = tupla[3]
-
-            
+            op2 = str(op2)
+           
             if isinstance(op1, bool):
                 op1 = str(op1)
                 if tupla[3] != None:
@@ -76,9 +84,9 @@ def listaExecucao(lista, posicao):
                     
                 execucao[tupla[1]] = val
 
-            elif op1.isnumeric():
+            elif isinstance(op1, str) and op1.isnumeric():
                 if tupla[3] != None:
-                    if op2.isnumeric():
+                    if isinstance(op2, str) and op2.isnumeric():
                         val = eval(op1 + tupla[0] + op2)
                     else:
                         print("Variável não encontrada")
@@ -92,7 +100,7 @@ def listaExecucao(lista, posicao):
                     
                 execucao[tupla[1]] = val
             else:
-                print("Variável não encontrada")
+                print("Variável não encontradaaa")
                 exit()
         
         if tupla[0] == 'if':
@@ -110,7 +118,7 @@ def listaExecucao(lista, posicao):
             i = label_pos 
 
         i += 1 
-
+   
     return execucao
 
 exemplo = programa()

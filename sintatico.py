@@ -64,10 +64,14 @@ def stmtList(): #stmtList> -> <stmt> <stmtList> | & ;
         enumtokens.TKN_NUMEROS_FLOAT,
         enumtokens.TKN_NUMEROS_INT
     ]
-
-    if tokens[0][0] in array_tokens:
-        stmt()
-        stmtList()
+    
+    if tokens:
+        if tokens[0][0] in array_tokens: #ERRO AQUI
+            stmt()
+            stmtList()
+    # else:
+    #     print("Não possui correspondente para", tokens[0][1])
+    #     exit()
 
 def stmt(): #<stmt> -> <forStmt> | <ioStmt> | <whileStmt> | <expr> ';' | <ifStmt> | <bloco> | 'break'';'| 'continue'';'| <declaration> | 'return' <fator> ';'| ';' ;
     if tokens[0][0] == enumtokens.TKN_FOR:
@@ -78,7 +82,7 @@ def stmt(): #<stmt> -> <forStmt> | <ioStmt> | <whileStmt> | <expr> ';' | <ifStmt
         whileStmt()
     elif tokens[0][0] in [enumtokens.TKN_VARIAVEIS, enumtokens.TKN_NEGACAO, enumtokens.TKN_ADICAO, enumtokens.TKN_SUBTRACAO, enumtokens.TKN_ABRE_PARENTESES, enumtokens.TKN_NUMEROS_FLOAT, enumtokens.TKN_NUMEROS_INT ]: #EXPRESSAO
         expr()
-        consome(enumtokens.TKN_PONTO_VIRGULA, 'stmt1') #AQUI
+        consome(enumtokens.TKN_PONTO_VIRGULA, 'stmt1') 
     elif tokens[0][0] == enumtokens.TKN_IF:
         ifStmt()
     elif tokens[0][0] == enumtokens.TKN_ABRE_CHAVES:
@@ -318,10 +322,13 @@ def fator(): #fator> -> 'NUMint' | 'NUMfloat' | 'IDENT'  | '(' <atrib> ')' ;
 
 
 def consome(tkn_esperado, func=''):
-    if tokens[0][0] == tkn_esperado:
+    esperado = descobretoken(tkn_esperado)
+    if not tokens:
+        print(f"Esperado o token {esperado} e não foi encontrado mais tokens")
+        exit() 
+    elif tokens[0][0] == tkn_esperado:
         tokens.pop(0)
     else:
-        esperado = descobretoken(tkn_esperado)
         encontrado = descobretoken(tokens[0][0])
         print(f"Esperado o token {esperado} e foi encontrado o token {encontrado} - Linha {tokens[0][2]} - Coluna {tokens[0][3]} - Funcao {func} - Lexema {tokens[0][1]}")
         exit()
