@@ -1,32 +1,42 @@
 from enumtokens import *
-from main import resultado
+# from main import resultado
 import re
 
-tokens = resultado()
+tokens = []
+
+#resultado()
 
 ####################################### INICIO - FUNCOES PRINCIPAIS ###########################
 
 def function(): #<function*> -> <type> 'IDENT' '(' <argList> ')' <bloco> ;
+    l = []
     type()
     consome(enumtokens.TKN_VARIAVEIS, 'function')
     consome(enumtokens.TKN_ABRE_PARENTESES, 'function')
-    arglist()
+    l.extend(arglist())
     consome(enumtokens.TKN_FECHA_PARENTESES, 'function')
-    bloco()
+    l.extend(bloco())
+    return l
 
 def arglist(): #<argList> -> <arg> <restoArgList> | & ;
+    l = []
     if tokens[0][0] == enumtokens.TKN_INT or  tokens[0][0] == enumtokens.TKN_FLOAT:
-        arg()
-        restoarglist()
+        l.append(arg())
+        l.extend(restoarglist())
+    return l
 
 def arg(): #<arg> -> <type> 'IDENT' ;
     consome(tokens[0][0], 'arg')
+    t = tokens[0][1]
     consome(enumtokens.TKN_VARIAVEIS, 'arg')
+    return ('=', t, 0, None)
 
 def restoarglist(): #<restoArgList> -> ',' <argList> | & ;
+    l = []
     if tokens[0][0] == enumtokens.TKN_VIRGULA:
         consome(tokens[0][0], 'restoarglist')
-        arglist()
+        l.extend(arglist())
+    return l
 
 def type(): #<type> -> 'int' | 'float' ;
     if tokens[0][0] == enumtokens.TKN_INT:
@@ -38,11 +48,14 @@ def type(): #<type> -> 'int' | 'float' ;
         exit()
 
 def bloco(): #<bloco> -> '{' <stmtList> '}' ;
+    l = []
     consome(enumtokens.TKN_ABRE_CHAVES, 'bloco')
-    stmtList()
+    l.extend(stmtList())
     consome(enumtokens.TKN_FECHA_CHAVES, 'bloco')
+    return l
    
 def stmtList(): #stmtList> -> <stmt> <stmtList> | & ;
+    l = []
     array_tokens = [
         enumtokens.TKN_FOR,
         enumtokens.TKN_PRINT,
@@ -67,26 +80,29 @@ def stmtList(): #stmtList> -> <stmt> <stmtList> | & ;
     
     if tokens:
         if tokens[0][0] in array_tokens: #ERRO AQUI
-            stmt()
-            stmtList()
+            l.extend(stmt())
+            l.extend(stmtList())
+
+    return l
     # else:
     #     print("Não possui correspondente para", tokens[0][1])
     #     exit()
 
 def stmt(): #<stmt> -> <forStmt> | <ioStmt> | <whileStmt> | <expr> ';' | <ifStmt> | <bloco> | 'break'';'| 'continue'';'| <declaration> | 'return' <fator> ';'| ';' ;
+    l = []
     if tokens[0][0] == enumtokens.TKN_FOR:
-       forStmt()
+       forStmt() #essa
     elif tokens[0][0] == enumtokens.TKN_PRINT or tokens[0][0] == enumtokens.TKN_SCAN:
-        ioStmt()
+        ioStmt() #essa
     elif tokens[0][0] == enumtokens.TKN_WHILE:
-        whileStmt()
+        whileStmt() #essa
     elif tokens[0][0] in [enumtokens.TKN_VARIAVEIS, enumtokens.TKN_NEGACAO, enumtokens.TKN_ADICAO, enumtokens.TKN_SUBTRACAO, enumtokens.TKN_ABRE_PARENTESES, enumtokens.TKN_NUMEROS_FLOAT, enumtokens.TKN_NUMEROS_INT ]: #EXPRESSAO
         expr()
         consome(enumtokens.TKN_PONTO_VIRGULA, 'stmt1') 
     elif tokens[0][0] == enumtokens.TKN_IF:
-        ifStmt()
+        ifStmt() #essa
     elif tokens[0][0] == enumtokens.TKN_ABRE_CHAVES:
-        bloco()
+        bloco() #essa
     elif tokens[0][0] == enumtokens.TKN_BREAK:
         consome(enumtokens.TKN_BREAK, 'stmt2')
         consome(enumtokens.TKN_PONTO_VIRGULA, 'stmt3')      
@@ -94,13 +110,14 @@ def stmt(): #<stmt> -> <forStmt> | <ioStmt> | <whileStmt> | <expr> ';' | <ifStmt
         consome(enumtokens.TKN_CONTINUE, 'stmt4')
         consome(enumtokens.TKN_PONTO_VIRGULA, 'stmt5')
     elif tokens[0][0] == enumtokens.TKN_INT or tokens[0][0] == enumtokens.TKN_FLOAT:
-        declaration()
+        l.extend(declaration())
     elif tokens[0][0] == enumtokens.TKN_RETURN:
         consome(enumtokens.TKN_RETURN, 'stmt6')
-        fator()
+        fator() #essa
         consome(enumtokens.TKN_PONTO_VIRGULA, 'stmt7')
     elif tokens[0][0] == enumtokens.TKN_PONTO_VIRGULA:
         consome(enumtokens.TKN_PONTO_VIRGULA, 'stmt8')
+    return l
 
 ####################################### FIM - FUNCOES PRINCIPAIS ###########################
 
@@ -108,19 +125,29 @@ def stmt(): #<stmt> -> <forStmt> | <ioStmt> | <whileStmt> | <expr> ';' | <ifStmt
 ####################################### INICIO - DESCRICAO DOS STMT ###########################
 
 def declaration(): #<declaration> -> <type> <identList> ';' ;
+    l = []
     type()
-    identList()
+    l.extend(identList())
     consome(enumtokens.TKN_PONTO_VIRGULA, 'declaration')
+    return l
 
 def identList(): #<identList> -> 'IDENT' <restoIdentList> ;
-    consome(enumtokens.TKN_VARIAVEIS, 'identlist')
-    restoIdentList()
+    l = []
+    t = tokens[0][1]
+    consome(enumtokens.TKN_VARIAVEIS, 'identlist') 
+    l.append(('=',t, 0, None))
+    l.extend(restoIdentList())
+    return l
 
 def restoIdentList(): #<restoIdentList> -> ',' 'IDENT' <restoIdentList> | & ;
+    l = []
     if tokens[0][0] == enumtokens.TKN_VIRGULA:
         consome(enumtokens.TKN_VIRGULA, 'restoidentlist')
+        t = tokens[0][1]
         consome(enumtokens.TKN_VARIAVEIS, 'restoidentlist')
-        restoIdentList()
+        l.append(('=',t, 0, None))
+        l.extend(restoIdentList())
+    return l
         
 def forStmt(): #'for' '(' <optExpr> ';' <optExpr> ';' <optExpr> ')' <stmt> ;
     consome(enumtokens.TKN_FOR, '1')
@@ -409,4 +436,11 @@ def descobretoken(token):
 
     return tipo
 
-function()
+def functionInterpretador(tokens1):
+    # print(tokens1)
+
+    for i in tokens1:
+        tokens.append(i)
+ 
+    resultado = function()
+    print (resultado)
