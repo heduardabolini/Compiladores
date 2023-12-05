@@ -93,16 +93,16 @@ def stmt(): #<stmt> -> <forStmt> | <ioStmt> | <whileStmt> | <expr> ';' | <ifStmt
     if tokens[0][0] == enumtokens.TKN_FOR:
        forStmt() #essa
     elif tokens[0][0] == enumtokens.TKN_PRINT or tokens[0][0] == enumtokens.TKN_SCAN:
-        ioStmt() #essa
+        l.extend(ioStmt())
     elif tokens[0][0] == enumtokens.TKN_WHILE:
-        whileStmt() #essa
+        l.extend(whileStmt())
     elif tokens[0][0] in [enumtokens.TKN_VARIAVEIS, enumtokens.TKN_NEGACAO, enumtokens.TKN_ADICAO, enumtokens.TKN_SUBTRACAO, enumtokens.TKN_ABRE_PARENTESES, enumtokens.TKN_NUMEROS_FLOAT, enumtokens.TKN_NUMEROS_INT ]: #EXPRESSAO
         expr()
         consome(enumtokens.TKN_PONTO_VIRGULA, 'stmt1') 
     elif tokens[0][0] == enumtokens.TKN_IF:
-        ifStmt() #essa
+        l.extend(ifStmt())
     elif tokens[0][0] == enumtokens.TKN_ABRE_CHAVES:
-        bloco() #essa
+        l.extend(bloco())
     elif tokens[0][0] == enumtokens.TKN_BREAK:
         consome(enumtokens.TKN_BREAK, 'stmt2')
         consome(enumtokens.TKN_PONTO_VIRGULA, 'stmt3')      
@@ -113,7 +113,7 @@ def stmt(): #<stmt> -> <forStmt> | <ioStmt> | <whileStmt> | <expr> ';' | <ifStmt
         l.extend(declaration())
     elif tokens[0][0] == enumtokens.TKN_RETURN:
         consome(enumtokens.TKN_RETURN, 'stmt6')
-        fator() #essa
+        fator()
         consome(enumtokens.TKN_PONTO_VIRGULA, 'stmt7')
     elif tokens[0][0] == enumtokens.TKN_PONTO_VIRGULA:
         consome(enumtokens.TKN_PONTO_VIRGULA, 'stmt8')
@@ -150,41 +150,65 @@ def restoIdentList(): #<restoIdentList> -> ',' 'IDENT' <restoIdentList> | & ;
     return l
         
 def forStmt(): #'for' '(' <optExpr> ';' <optExpr> ';' <optExpr> ')' <stmt> ;
+    l = []
     consome(enumtokens.TKN_FOR, '1')
     consome(enumtokens.TKN_ABRE_PARENTESES,'2')
-    optExpr()
+    l1 = optExpr()
     consome(enumtokens.TKN_PONTO_VIRGULA, '3')
-    optExpr()
+    l2 = optExpr()
     consome(enumtokens.TKN_PONTO_VIRGULA, '4')
-    optExpr()
+    l3 = optExpr()
     consome(enumtokens.TKN_FECHA_PARENTESES, '5')
-    stmt()
+    l4 = stmt()
+
+    l.extend(l1)
+    l.append(("label", "inicio", None, None))
+    l.extend(l2)
+    l.append(('if', 'a', 'verdadeiro', 'falsidade'))
+    l.append(('label', 'verdadeiro', None, None)) 
+    l.extend(l4)
+    l.extend(l3)
+    l.append(('jump', 'inicio', None, None))
+    l.append(('label', 'falsidade', None, None))
+    return l
 
 def optExpr(): #<optExpr> -> <expr> | & ;
+    l = []
     if tokens[0][0] in [enumtokens.TKN_VARIAVEIS, enumtokens.TKN_NEGACAO, enumtokens.TKN_ADICAO, enumtokens.TKN_SUBTRACAO, enumtokens.TKN_ABRE_PARENTESES, enumtokens.TKN_NUMEROS_FLOAT, enumtokens.TKN_NUMEROS_INT ]: #EXPRESSAO
-        expr()
+        l.extend(expr())
+    return l
          
 def ioStmt(): #<ioStmt> -> 'scan' '(' 'STR' ',' 'IDENT' ')' ';' 'print' '(' <outList> ')' ';' ;
+    l = []
+    
     if tokens[0][0] == enumtokens.TKN_SCAN:
         consome(enumtokens.TKN_SCAN, 'iostmt')
         consome(enumtokens.TKN_ABRE_PARENTESES, 'iostmt')
+        t = tokens[0][1]
         consome(enumtokens.TKN_STRING, 'iostmt')
         consome(enumtokens.TKN_VIRGULA, 'iostmt')
+        c = tokens[0][1]
         consome(enumtokens.TKN_VARIAVEIS, 'iostmt')
         consome(enumtokens.TKN_FECHA_PARENTESES, 'iostmt')
         consome(enumtokens.TKN_PONTO_VIRGULA, 'iostmt')
+        l.append(('call', 'scan', t, c))
     else:
         consome(enumtokens.TKN_PRINT, 'iostmt')
         consome(enumtokens.TKN_ABRE_PARENTESES, 'iostmt')
-        outList()
+        l.extend(outList())
         consome(enumtokens.TKN_FECHA_PARENTESES, 'iostmt')
         consome(enumtokens.TKN_PONTO_VIRGULA, 'iostmt')
+    return l
 
 def outList(): #<outList> -> <out> <restoOutList> ; 
-    out()
-    restoOutList()
+    l = []
+    l.append(out())
+    l.extend(restoOutList())
+    return l
 
 def out(): #<out> -> 'STR' | 'IDENT' | 'NUMint' | 'NUMfloat' ;
+    t = tokens[0][1]
+
     if tokens[0][0] == enumtokens.TKN_STRING:
         consome(enumtokens.TKN_STRING, 'out')
     elif tokens[0][0] == enumtokens.TKN_VARIAVEIS:
@@ -193,32 +217,54 @@ def out(): #<out> -> 'STR' | 'IDENT' | 'NUMint' | 'NUMfloat' ;
         consome(enumtokens.TKN_NUMEROS_INT, 'out') 
     elif tokens[0][0] == enumtokens.TKN_NUMEROS_FLOAT:
         consome(enumtokens.TKN_NUMEROS_FLOAT, 'out') 
+    return(('call', 'print', t, None))
 
 def restoOutList(): #<restoOutList> -> ',' <out> <restoOutList> | & ;
+    l = []
     if tokens[0][0] == enumtokens.TKN_VIRGULA:
         consome(enumtokens.TKN_VIRGULA, 'out')
-        out()
-        restoOutList() 
+        l.append(out())
+        l.extend(restoOutList())
+    return l
 
 def whileStmt(): #<whileStmt> -> 'while' '(' <expr> ')' <stmt> ;
+    l = []
     consome(enumtokens.TKN_WHILE, 'whilestmt')
     consome(enumtokens.TKN_ABRE_PARENTESES, 'whilestmt')
-    expr()
+    l1 = expr()
     consome(enumtokens.TKN_FECHA_PARENTESES, 'whilestmt')
-    stmt()
+    l2 = stmt()
+
+    l.append(("label", "inicio", None, None))
+    l.extend(l1)
+    l.append(('if', 'a', 'verdadeiro', 'falsidade'))
+    l.append(('label', 'verdadeiro', None, None))
+    l.extend(l2)
+    l.append(('jump', 'inicio', None, None))
+    l.append(('label', 'falsidade', None, None))
+    return l
 
 def ifStmt(): #<ifStmt> -> 'if' '(' <expr> ')' <stmt> <elsePart> ;
+    l = []
     consome(enumtokens.TKN_IF, 'ifstmt')
-    consome(enumtokens.TKN_ABRE_PARENTESES, 'ifstmt')
-    expr()
+    consome(enumtokens.TKN_ABRE_PARENTESES, 'ifstmt')   
+    l.extend(expr())
+    l.append(('if', 'a', 'verdadeiro', 'falsidade'))
     consome(enumtokens.TKN_FECHA_PARENTESES, 'ifstmt')
-    stmt()
-    elsePart()
+    l.append(('label', 'verdadeiro', None, None))
+    l.extend(stmt())
+    l.append(('jump', 'fim', None, None))
+    l.append(('label', 'falsidade', None, None))
+    l.extend(elsePart())
+    l.append(('label', 'fim', None, None))
+    return l
 
 def elsePart(): #<elsePart> -> 'else' <stmt> | & ;
+    l = []
     if tokens[0][0] == enumtokens.TKN_ELSE:
         consome(enumtokens.TKN_ELSE, 'elsepart')
-        stmt() 
+        l.extend(stmt())
+    return l
 
 ####################################### FIM - DESCRICAO DOS STMT ####################################
 
@@ -226,6 +272,7 @@ def elsePart(): #<elsePart> -> 'else' <stmt> | & ;
 
 def expr(): #<expr> -> <atrib> ;
     atrib()
+    return [('==','a',1,1)]
 
 def atrib(): #<atrib> -> <or> <restoAtrib> ;
     functionOr()

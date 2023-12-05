@@ -1,8 +1,5 @@
 int main() {
 	
-	/*Arquivo completamente validado.
-	Está executando exatamente como deveria*/
-
 	int n;
 	int teste;
 	n = 9 * 5 + (-3.5);
@@ -21,8 +18,8 @@ int main() {
 	i = 0;
 	while(i < teste) {
 		print(i, "\n");
-		i = i + 1;
-	}
+		i = i -  1;
+	
 
 	for(i = 0; i < 10; i = i + 1) {
 		if(i > 5)

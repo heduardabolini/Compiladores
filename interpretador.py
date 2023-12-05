@@ -79,7 +79,7 @@ def listaExecucao(lista, posicao):
                     if tupla[0] in ['!']:
                         val = eval(logico[tupla[0]] + op1)
                     else:
-                        print("Operação Inválida")
+                        print("Operação Inválida1")
                         exit() 
                     
                 execucao[tupla[1]] = val
@@ -94,8 +94,10 @@ def listaExecucao(lista, posicao):
                 else:
                     if tupla[0] in ['+', '-']:
                         val = eval(tupla[0] + op1)
+                    elif tupla[0] in ['=']:
+                        val = tupla[2]
                     else:
-                        print("Operação Inválida")
+                        print("Operação Inválida2")
                         exit() 
                     
                 execucao[tupla[1]] = val

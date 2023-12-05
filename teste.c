@@ -1,14 +1,8 @@
-int main(){
-	//tratar comentario
-	//tratar comentario
-	//tratar comentario
-	int a = 3;
-	scan("Entre com o inteiro:"); //tratar comentario
-	/*
-		ppppp
-		a
-		b
-		c
-	*/ 
-	scan("Teste");
+int main(int a, int b){
+	int i;
+    //i = 0;
+    while(i < 10){
+        print("10");
+        int x;
+    }
 }

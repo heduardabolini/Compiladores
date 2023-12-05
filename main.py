@@ -21,7 +21,10 @@ def resultado():
     linhas = lerArq(nome_arquivo)
     comentario = transformarComentario(linhas)
     tokens = separarToken(comentario)
-    print (tokens)
+    # print(tokens)
     lexicos = lexico(tokens)
+    functionInterpretador(lexicos)
     return lexicos
 
+
+resultado()
